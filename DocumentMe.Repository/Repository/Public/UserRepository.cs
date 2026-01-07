@@ -19,7 +19,7 @@ namespace DocumentMe.Repository.Repository.Public
             return await _context.Users.Where(u => u.UserName == userName && u.IsActive).FirstOrDefaultAsync();
         }
 
-        public async Task SaveUser(User user)
+        public async Task CreateUser(User user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();

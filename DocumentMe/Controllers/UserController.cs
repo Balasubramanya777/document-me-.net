@@ -1,10 +1,8 @@
-﻿using Base.DataAccessLayer.DTO.Base;
-using DocumentMe.API.Helper;
-using DocumentMe.DataAccessLayer.DTO.Public;
+﻿using DocumentMe.API.Helper;
+using DocumentMe.DataAccessLayer.DTO.Auth;
 using DocumentMe.Service.IService.Public;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static DocumentMe.DataAccessLayer.DTO.Public.SignInDTO;
 
 namespace DocumentMe.API.Controllers
 {
@@ -20,10 +18,10 @@ namespace DocumentMe.API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost, Route("SaveUser")]
-        public async Task<IActionResult> SaveUser(SignUpDTO userDto)
+        [HttpPost, Route("CreateUser")]
+        public async Task<IActionResult> CreateUser(SignUpRequest userDto)
         {
-            var response = await _userService.SaveUser(userDto);
+            var response = await _userService.CreateUser(userDto);
             return response.ToActionResult();
         }
 

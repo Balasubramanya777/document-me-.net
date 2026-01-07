@@ -6,5 +6,6 @@ namespace DocumentMe.Service.IService.Public
     public interface IDocumentService
     {
         Task<ApiResponse<DocumentDTO>> CreateDocument();
+        Task<ApiResponse<DocumentDTO>> UpdateDocument(DocumentDTO documentDTO);
     }
 }

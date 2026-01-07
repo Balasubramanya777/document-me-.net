@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Base.DataAccessLayer.DTO.Base;
+using DocumentMe.DataAccessLayer.DTO.Auth;
 using DocumentMe.DataAccessLayer.DTO.Public;
 using DocumentMe.DataAccessLayer.Entity.Public;
 using DocumentMe.Repository.IRepository.Public;
@@ -9,7 +10,6 @@ using DocumentMe.Utility.IUtility;
 using DocumentMe.Utility.Resource;
 using Microsoft.Extensions.Localization;
 using System.Net;
-using static DocumentMe.DataAccessLayer.DTO.Public.SignInDTO;
 
 namespace DocumentMe.Service.Service.Public
 {
@@ -36,14 +36,15 @@ namespace DocumentMe.Service.Service.Public
             return await _userRepository.GetUserByUserName(userName);
         }
 
-        public async Task<ApiResponse<bool>> SaveUser(SignUpDTO userDto)
+        public async Task<ApiResponse<bool>> CreateUser(SignUpRequest userDto)
         {
-            if (string.IsNullOrWhiteSpace(userDto.UserName) || string.IsNullOrWhiteSpace(userDto.Password))
-                return new ApiResponse<bool>(false, false, _messagesLocalizer["SignInInvalid"], HttpStatusCode.BadRequest);
+            if (string.IsNullOrWhiteSpace(userDto.UserName) || string.IsNullOrWhiteSpace(userDto.FirstName) || string.IsNullOrWhiteSpace(userDto.LastName)
+                 || string.IsNullOrWhiteSpace(userDto.Email) || string.IsNullOrWhiteSpace(userDto.Password))
+                return new ApiResponse<bool>(false, false, _messagesLocalizer["AuthSignInInvalid"], HttpStatusCode.BadRequest);
 
             User? isExist = await _userRepository.GetUserByUserName(userDto.UserName);
             if (isExist != null)
-                return new ApiResponse<bool>(false, false, _messagesLocalizer["AlreadyExistsWith", _labelsLocalizer["User"], _labelsLocalizer["UserName"], userDto.UserName], HttpStatusCode.Conflict);
+                return new ApiResponse<bool>(false, false, _messagesLocalizer["ErrorAlreadyExistsWith", _labelsLocalizer["User"], _labelsLocalizer["UserName"], userDto.UserName], HttpStatusCode.Conflict);
 
             string hashedPassword = PasswordHasher.HashPassword(userDto.Password);
 
@@ -58,8 +59,8 @@ namespace DocumentMe.Service.Service.Public
                 CreatedAt = DateTime.UtcNow,
             };
 
-            await _userRepository.SaveUser(user);
-            return new ApiResponse<bool>(true, true, _messagesLocalizer["SaveSuccess", _labelsLocalizer["User"]], HttpStatusCode.Created);
+            await _userRepository.CreateUser(user);
+            return new ApiResponse<bool>(true, true, _messagesLocalizer["ResponseSaveSuccess", _labelsLocalizer["User"]], HttpStatusCode.Created);
         }
 
         //public async Task<SignInResponse> Authenticate(SignInRequest signInReq)
@@ -69,7 +70,7 @@ namespace DocumentMe.Service.Service.Public
         //        return new SignInResponse
         //        {
         //            AccessToken = string.Empty,
-        //            User = new ApiResponse<UserDTO>(null, false, _messagesLocalizer["SignInInvalid"], HttpStatusCode.BadRequest)
+        //            User = new ApiResponse<UserDTO>(null, false, _messagesLocalizer["AuthSignInInvalid"], HttpStatusCode.BadRequest)
         //        };
 
 
@@ -77,56 +78,30 @@ namespace DocumentMe.Service.Service.Public
         //    return new SignInResponse
         //    {
         //        AccessToken = token,
-        //        User = new ApiResponse<UserDTO>(userDto, true, _messagesLocalizer["SignInSuccess"], HttpStatusCode.OK)
+        //        User = new ApiResponse<UserDTO>(userDto, true, _messagesLocalizer["AuthSignInSuccess"], HttpStatusCode.OK)
         //    };
         //}
 
         public async Task<ApiResponse<SignInResponse>> Authenticate(SignInRequest signInReq)
         {
-            var (token, user) = await AuthenticateHelper(signInReq);
-            if (string.IsNullOrEmpty(token) || user == null)
-                return new ApiResponse<SignInResponse>(null, false, _messagesLocalizer["SignInInvalid"], HttpStatusCode.BadRequest);
-
-            UserDTO userDto = _mapper.Map(user, new UserDTO());
-            return new ApiResponse<SignInResponse>(new SignInResponse { AccessToken = token, User = userDto }, true, _messagesLocalizer["SignInSuccess"], HttpStatusCode.OK);
-        }
-
-        private async Task<(string?, User? user)> AuthenticateHelper(SignInRequest signInReq)
-        {
             User? user = await _userRepository.GetUserByUserName(signInReq.UserName);
             if (user == null)
-                return (null, null);
+                return new ApiResponse<SignInResponse>(null, false, _messagesLocalizer["AuthSignInInvalid"], HttpStatusCode.BadRequest);
 
-            if (!PasswordHasher.VerifyPassword(signInReq.Password, user.Password))
-                return (null, user);
+            string? token = AuthenticateHelper(signInReq, user);
+            if (string.IsNullOrEmpty(token))
+                return new ApiResponse<SignInResponse>(null, false, _messagesLocalizer["AuthSignInInvalid"], HttpStatusCode.BadRequest);
 
-            return (_jwtToken.GenerateJWT(user.UserId.ToString(), user.Email), user);
+            UserDTO userDto = _mapper.Map(user, new UserDTO());
+            return new ApiResponse<SignInResponse>(new SignInResponse { AccessToken = token, User = userDto }, true, _messagesLocalizer["AuthSignInSuccess"], HttpStatusCode.OK);
         }
 
-        //private string GenerateJWT(User user)
-        //{
-        //    var tokenHandler = new JwtSecurityTokenHandler();
-        //    var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Key"]!);
-        //    var tokenDescriptor = new SecurityTokenDescriptor
-        //    {
-        //        Subject = new ClaimsIdentity(GetClaims(user)),
-        //        Issuer = _configuration["JwtSettings:Issuer"],
-        //        Audience = _configuration["JwtSettings:Audience"],
-        //        Expires = DateTime.UtcNow.AddSeconds(30000),
-        //        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        //    };
+        private string? AuthenticateHelper(SignInRequest signInReq, User user)
+        {
+            if (!PasswordHasher.VerifyPassword(signInReq.Password, user.Password))
+                return null;
 
-        //    var token = tokenHandler.CreateToken(tokenDescriptor);
-        //    return tokenHandler.WriteToken(token);
-        //}
-
-        //private static IEnumerable<Claim> GetClaims(User user)
-        //{
-        //    return
-        //    [
-        //        new(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
-        //        new(JwtRegisteredClaimNames.Email, user.Email)
-        //    ];
-        //}
+            return _jwtToken.GenerateJWT(user.UserId.ToString(), user.Email);
+        }
     }
 }
