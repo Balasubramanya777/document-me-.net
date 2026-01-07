@@ -35,12 +35,12 @@ namespace DocumentMe.Service.Service.Public
             string? userId = _currentUser.UserId;
             if (string.IsNullOrEmpty(userId))
             {
-                return new ApiResponse<DocumentDTO>(null, false, _messagesLocalizer["AccessDenied"], HttpStatusCode.Forbidden);
+                return new ApiResponse<DocumentDTO>(null, false, _messagesLocalizer["AuthAccessDenied"], HttpStatusCode.Forbidden);
             }
 
             if (!long.TryParse(userId, out long id))
             {
-                return new ApiResponse<DocumentDTO>(null, false, _messagesLocalizer["InternalServerError"], HttpStatusCode.InternalServerError);
+                return new ApiResponse<DocumentDTO>(null, false, _messagesLocalizer["ErrorInternalServerError"], HttpStatusCode.InternalServerError);
             }
 
             DateTime now = DateTime.UtcNow;
@@ -68,16 +68,39 @@ namespace DocumentMe.Service.Service.Public
             return ApiResponse<DocumentDTO>.Builder()
                 .Data(new DocumentDTO { Title = document.Title, DocumentId = document.DocumentId })
                 .Success(true)
-                .Message(_messagesLocalizer["SaveSuccess", _labelsLocalizer["Document"]])
+                .Message(_messagesLocalizer["ResponseSaveSuccess", _labelsLocalizer["Document"]])
                 .Code(HttpStatusCode.Created)
                 .Build();
         }
 
-        public async Task UpdateDocument()
+        public async Task<ApiResponse<DocumentDTO>> UpdateDocument(DocumentDTO documentDTO)
         {
+            string? userId = _currentUser.UserId;
+            if (string.IsNullOrEmpty(userId))
+                return new ApiResponse<DocumentDTO>(null, false, _messagesLocalizer["AuthAccessDenied"], HttpStatusCode.Forbidden);
 
-            //_documentRepository.IsDocumentExist()
+            if (string.IsNullOrWhiteSpace(documentDTO.Title) || documentDTO.DocumentId == default)
+                return new ApiResponse<DocumentDTO>(null, false, _messagesLocalizer["ErrorMissingField"], HttpStatusCode.BadRequest);
 
+            Document? document = await _documentRepository.GetDocumentById(documentDTO.DocumentId);
+            if (document == null)
+                return new ApiResponse<DocumentDTO>(null, false, _messagesLocalizer["ErrorNotFound"], HttpStatusCode.BadRequest);
+
+            DateTime now = DateTime.UtcNow;
+            document.Title = documentDTO.Title;
+            document.LastSeenAt = now;
+            document.UpdatedAt = now;
+
+            if (!documentDTO.Title.StartsWith(Constants.MyNewDocumentWithSpace))
+                document.DefaultIndex = null;
+
+            await _documentRepository.UpdateDocument(document);
+            return ApiResponse<DocumentDTO>.Builder()
+                .Data(documentDTO)
+                .Success(true)
+                .Message(_messagesLocalizer["ResponseUpdateSuccess", _labelsLocalizer["Document"]])
+                .Code(HttpStatusCode.OK)
+                .Build();
         }
     }
 }

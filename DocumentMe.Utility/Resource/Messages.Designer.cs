@@ -63,72 +63,90 @@ namespace DocumentMe.Utility.Resource {
         /// <summary>
         ///   Looks up a localized string similar to Access denied..
         /// </summary>
-        internal static string AccessDenied {
+        internal static string AuthAccessDenied {
             get {
-                return ResourceManager.GetString("AccessDenied", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} already exists with {1} &quot;{2}&quot;..
-        /// </summary>
-        internal static string AlreadyExistsWith {
-            get {
-                return ResourceManager.GetString("AlreadyExistsWith", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Internal server error..
-        /// </summary>
-        internal static string InternalServerError {
-            get {
-                return ResourceManager.GetString("InternalServerError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Data retrieved successfully..
-        /// </summary>
-        internal static string RetrieveSuccess {
-            get {
-                return ResourceManager.GetString("RetrieveSuccess", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} saved successfully..
-        /// </summary>
-        internal static string SaveSuccess {
-            get {
-                return ResourceManager.GetString("SaveSuccess", resourceCulture);
+                return ResourceManager.GetString("AuthAccessDenied", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Invalid username/password..
         /// </summary>
-        internal static string SignInInvalid {
+        internal static string AuthSignInInvalid {
             get {
-                return ResourceManager.GetString("SignInInvalid", resourceCulture);
+                return ResourceManager.GetString("AuthSignInInvalid", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to User signed in successfully..
         /// </summary>
-        internal static string SignInSuccess {
+        internal static string AuthSignInSuccess {
             get {
-                return ResourceManager.GetString("SignInSuccess", resourceCulture);
+                return ResourceManager.GetString("AuthSignInSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} already exists with {1} &quot;{2}&quot;..
+        /// </summary>
+        internal static string ErrorAlreadyExistsWith {
+            get {
+                return ResourceManager.GetString("ErrorAlreadyExistsWith", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internal server error..
+        /// </summary>
+        internal static string ErrorInternalServerError {
+            get {
+                return ResourceManager.GetString("ErrorInternalServerError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One or more required fields are missing or empty..
+        /// </summary>
+        internal static string ErrorMissingField {
+            get {
+                return ResourceManager.GetString("ErrorMissingField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record not found..
+        /// </summary>
+        internal static string ErrorNotFound {
+            get {
+                return ResourceManager.GetString("ErrorNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data retrieved successfully..
+        /// </summary>
+        internal static string ResponseRetrieveSuccess {
+            get {
+                return ResourceManager.GetString("ResponseRetrieveSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} saved successfully..
+        /// </summary>
+        internal static string ResponseSaveSuccess {
+            get {
+                return ResourceManager.GetString("ResponseSaveSuccess", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to {0} updated successfully..
         /// </summary>
-        internal static string UpdateSuccess {
+        internal static string ResponseUpdateSuccess {
             get {
-                return ResourceManager.GetString("UpdateSuccess", resourceCulture);
+                return ResourceManager.GetString("ResponseUpdateSuccess", resourceCulture);
             }
         }
     }

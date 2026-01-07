@@ -1,4 +1,5 @@
 ﻿using DocumentMe.API.Helper;
+using DocumentMe.DataAccessLayer.DTO.Document;
 using DocumentMe.Service.IService.Public;
 using DocumentMe.Utility.Resource;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +25,13 @@ namespace DocumentMe.API.Controllers
         public async Task<IActionResult> CreateDocument()
         {
             var response = await _documentService.CreateDocument();
+            return response.ToActionResult();
+        }
+
+        [HttpPost("UpdateDocument")]
+        public async Task<IActionResult> UpdateDocument(DocumentDTO documentDTO)
+        {
+            var response = await _documentService.UpdateDocument(documentDTO);
             return response.ToActionResult();
         }
     }

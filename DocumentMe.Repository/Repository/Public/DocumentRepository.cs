@@ -28,6 +28,11 @@ namespace DocumentMe.Repository.Repository.Public
             return document;
         }
 
+        public async Task<Document?> GetDocumentById(long documentId)
+        {
+            return await _context.Documents.Where(x => x.DocumentId == documentId).FirstOrDefaultAsync();
+        }
+
         public async Task<int?> GetDefaultIndex(long createdBy)
         {
             return await _context.Documents

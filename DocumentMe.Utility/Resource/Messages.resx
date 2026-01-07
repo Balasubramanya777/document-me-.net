@@ -117,28 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AccessDenied" xml:space="preserve">
+  <data name="AuthAccessDenied" xml:space="preserve">
     <value>Access denied.</value>
   </data>
-  <data name="AlreadyExistsWith" xml:space="preserve">
+  <data name="ErrorAlreadyExistsWith" xml:space="preserve">
     <value>{0} already exists with {1} "{2}".</value>
   </data>
-  <data name="InternalServerError" xml:space="preserve">
+  <data name="ErrorInternalServerError" xml:space="preserve">
     <value>Internal server error.</value>
   </data>
-  <data name="RetrieveSuccess" xml:space="preserve">
+  <data name="ResponseRetrieveSuccess" xml:space="preserve">
     <value>Data retrieved successfully.</value>
   </data>
-  <data name="SaveSuccess" xml:space="preserve">
+  <data name="ResponseSaveSuccess" xml:space="preserve">
     <value>{0} saved successfully.</value>
   </data>
-  <data name="SignInInvalid" xml:space="preserve">
+  <data name="AuthSignInInvalid" xml:space="preserve">
     <value>Invalid username/password.</value>
   </data>
-  <data name="SignInSuccess" xml:space="preserve">
+  <data name="AuthSignInSuccess" xml:space="preserve">
     <value>User signed in successfully.</value>
   </data>
-  <data name="UpdateSuccess" xml:space="preserve">
+  <data name="ResponseUpdateSuccess" xml:space="preserve">
     <value>{0} updated successfully.</value>
+  </data>
+  <data name="ErrorMissingField" xml:space="preserve">
+    <value>One or more required fields are missing or empty.</value>
+  </data>
+  <data name="ErrorNotFound" xml:space="preserve">
+    <value>Record not found.</value>
   </data>
 </root>

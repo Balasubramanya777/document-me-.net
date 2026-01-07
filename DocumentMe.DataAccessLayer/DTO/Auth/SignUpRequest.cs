@@ -1,6 +1,6 @@
-﻿namespace DocumentMe.DataAccessLayer.DTO.Public
+﻿namespace DocumentMe.DataAccessLayer.DTO.Auth
 {
-    public class SignUpDTO
+    public class SignUpRequest
     {
         public required string UserName { get; set; }
         public required string FirstName { get; set; }
