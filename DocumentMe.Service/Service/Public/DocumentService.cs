@@ -43,7 +43,7 @@ namespace DocumentMe.Service.Service.Public
                 return new ApiResponse<DocumentDTO>(null, false, _messagesLocalizer["ErrorInternalServerError"], HttpStatusCode.InternalServerError);
             }
 
-            DateTime now = DateTime.UtcNow;
+            DateTimeOffset now = DateTimeOffset.UtcNow;
             int? defaultIndex = await _documentRepository.GetDefaultIndex(id);
 
             if (defaultIndex != null)
@@ -86,7 +86,7 @@ namespace DocumentMe.Service.Service.Public
             if (document == null)
                 return new ApiResponse<DocumentDTO>(null, false, _messagesLocalizer["ErrorNotFound"], HttpStatusCode.BadRequest);
 
-            DateTime now = DateTime.UtcNow;
+            DateTimeOffset now = DateTimeOffset.UtcNow;
             document.Title = documentDTO.Title;
             document.LastSeenAt = now;
             document.UpdatedAt = now;

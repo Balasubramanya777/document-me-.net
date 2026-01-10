@@ -38,10 +38,10 @@ namespace DocumentMe.DataAccessLayer.Entity.Public
         public bool IsActive { get; set; }
 
         [Column("created_at")]
-        public DateTime? CreatedAt { get; set; }
+        public DateTimeOffset? CreatedAt { get; set; }
 
         [Column("updated_at")]
-        public DateTime? UpdatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
 
         public virtual ICollection<Document> Documents { get; set; } = [];
     }

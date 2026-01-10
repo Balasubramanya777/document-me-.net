@@ -37,7 +37,9 @@ namespace DocumentMe.Repository.Repository.Public
         {
             return await _context.Documents
                 .Where(x => x.CreatedBy == createdBy && x.Title.StartsWith(Constants.MyNewDocumentWithSpace))
-                .Select(x => x.DefaultIndex).FirstOrDefaultAsync();
+                .OrderByDescending(x => x.DocumentId)
+                .Select(x => x.DefaultIndex)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<bool> IsDocumentExist(string title, long documentId, long createdBy)
