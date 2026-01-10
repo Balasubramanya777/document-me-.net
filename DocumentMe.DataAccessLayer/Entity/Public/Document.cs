@@ -19,17 +19,18 @@ namespace DocumentMe.DataAccessLayer.Entity.Public
         public int? DefaultIndex { get; set; }
 
         [Column("last_seen_at")]
-        public DateTime LastSeenAt { get; set; }
+        public DateTimeOffset LastSeenAt { get; set; }
 
         [Column("created_by")]
         public long? CreatedBy { get; set; }
 
         [Column("created_at")]
-        public DateTime? CreatedAt { get; set; }
+        public DateTimeOffset? CreatedAt { get; set; }
 
         [Column("updated_at")]
-        public DateTime? UpdatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
 
+        [ForeignKey(nameof(CreatedBy))]
         public virtual User? User { get; set; }
     }
 }

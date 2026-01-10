@@ -56,7 +56,7 @@ namespace DocumentMe.Service.Service.Public
                 Email = userDto.Email,
                 Password = hashedPassword,
                 IsActive = true,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTimeOffset.UtcNow,
             };
 
             await _userRepository.CreateUser(user);

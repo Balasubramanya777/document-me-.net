@@ -21,7 +21,7 @@ namespace DocumentMe.DataAccessLayer.Entity.Public
         public long? CreatedBy { get; set; }
 
         [Column("created_at")]
-        public DateTime? CreatedAt { get; set; }
+        public DateTimeOffset? CreatedAt { get; set; }
 
         public virtual Document? Document { get; set; }
         public virtual User? CreatedByNavigation { get; set; }

@@ -24,7 +24,7 @@ namespace DocumentMe.Utility.Utility
                 Subject = new ClaimsIdentity(GetClaims(userId, email)),
                 Issuer = _configuration["JwtSettings:Issuer"],
                 Audience = _configuration["JwtSettings:Audience"],
-                Expires = DateTime.UtcNow.AddSeconds(30000),
+                Expires = DateTimeOffset.UtcNow.AddSeconds(30000).UtcDateTime,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

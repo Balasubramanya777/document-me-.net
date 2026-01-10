@@ -17,7 +17,7 @@ namespace DocumentMe.DataAccessLayer.Entity.Public
         public long? Version { get; set; }
 
         [Column("updated_at")]
-        public DateTime? UpdatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
 
 
         public virtual Document? Document { get; set; }
