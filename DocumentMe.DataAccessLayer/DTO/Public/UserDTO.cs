@@ -1,6 +1,6 @@
 ﻿namespace DocumentMe.DataAccessLayer.DTO.Public
 {
-    public class UserDTO
+    public class UserDto
     {
         public long UserId { get; set; }
         public string Username { get; set; } = string.Empty;

@@ -1,4 +1,5 @@
-﻿using DocumentMe.DataAccessLayer.Entity.Public;
+﻿using DocumentMe.DataAccessLayer.DTO.Document;
+using DocumentMe.DataAccessLayer.Entity.Public;
 
 namespace DocumentMe.Repository.IRepository.Public
 {
@@ -9,5 +10,6 @@ namespace DocumentMe.Repository.IRepository.Public
         Task<Document?> GetDocumentById(long documentId);
         Task<int?> GetDefaultIndex(long createdBy);
         Task<bool> IsDocumentExist(string title, long documentId, long createdBy);
+        Task<List<DocumentUserDto>> GetDocuments();
     }
 }

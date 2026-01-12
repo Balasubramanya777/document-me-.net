@@ -70,15 +70,15 @@ namespace DocumentMe.Service.Service.Public
         //        return new SignInResponse
         //        {
         //            AccessToken = string.Empty,
-        //            User = new ApiResponse<UserDTO>(null, false, _messagesLocalizer["AuthSignInInvalid"], HttpStatusCode.BadRequest)
+        //            User = new ApiResponse<UserDto>(null, false, _messagesLocalizer["AuthSignInInvalid"], HttpStatusCode.BadRequest)
         //        };
 
 
-        //    UserDTO userDto = _mapper.Map(user, new UserDTO());
+        //    UserDto userDto = _mapper.Map(user, new UserDto());
         //    return new SignInResponse
         //    {
         //        AccessToken = token,
-        //        User = new ApiResponse<UserDTO>(userDto, true, _messagesLocalizer["AuthSignInSuccess"], HttpStatusCode.OK)
+        //        User = new ApiResponse<UserDto>(userDto, true, _messagesLocalizer["AuthSignInSuccess"], HttpStatusCode.OK)
         //    };
         //}
 
@@ -92,7 +92,7 @@ namespace DocumentMe.Service.Service.Public
             if (string.IsNullOrEmpty(token))
                 return new ApiResponse<SignInResponse>(null, false, _messagesLocalizer["AuthSignInInvalid"], HttpStatusCode.BadRequest);
 
-            UserDTO userDto = _mapper.Map(user, new UserDTO());
+            UserDto userDto = _mapper.Map(user, new UserDto());
             return new ApiResponse<SignInResponse>(new SignInResponse { AccessToken = token, User = userDto }, true, _messagesLocalizer["AuthSignInSuccess"], HttpStatusCode.OK);
         }
 

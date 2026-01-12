@@ -5,7 +5,8 @@ namespace DocumentMe.Service.IService.Public
 {
     public interface IDocumentService
     {
-        Task<ApiResponse<DocumentDTO>> CreateDocument();
-        Task<ApiResponse<DocumentDTO>> UpdateDocument(DocumentDTO documentDTO);
+        Task<ApiResponse<DocumentUpsertDto>> CreateDocument();
+        Task<ApiResponse<DocumentUpsertDto>> UpdateDocument(DocumentUpsertDto documentUpsertDto);
+        Task<ApiResponse<List<DocumentUserDto>>> GetDocuments();
     }
 }
