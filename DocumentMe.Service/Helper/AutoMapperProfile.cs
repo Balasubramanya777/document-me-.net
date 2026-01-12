@@ -9,8 +9,8 @@ namespace DocumentMe.Service.Helper
     {
         public AutoMapperProfile()
         {
-            CreateMap<Document, DocumentDTO>().ReverseMap();
-            CreateMap<User, UserDTO>().ReverseMap();
+            CreateMap<Document, DocumentUpsertDto>().ReverseMap();
+            CreateMap<User, UserDto>().ReverseMap();
         }
     }
 }

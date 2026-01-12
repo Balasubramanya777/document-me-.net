@@ -1,4 +1,6 @@
 ﻿using DocumentMe.DataAccessLayer.Database;
+using DocumentMe.DataAccessLayer.DTO.Document;
+using DocumentMe.DataAccessLayer.DTO.Public;
 using DocumentMe.DataAccessLayer.Entity.Public;
 using DocumentMe.Repository.IRepository.Public;
 using DocumentMe.Utility.Helper;
@@ -47,6 +49,30 @@ namespace DocumentMe.Repository.Repository.Public
             return await _context.Documents
                     .Where(x => x.Title.Equals(title) && x.CreatedBy == createdBy && x.DocumentId != documentId)
                     .AnyAsync();
+        }
+
+        public async Task<List<DocumentUserDto>> GetDocuments()
+        {
+            IQueryable<DocumentUserDto> query =
+                from d in _context.Documents
+                join u in _context.Users on d.CreatedBy equals u.UserId
+                select new DocumentUserDto
+                {
+                    DocumentId = d.DocumentId,
+                    Title = d.Title,
+                    LastSeenAt = d.LastSeenAt,
+                    User = new UserDto
+                    {
+                        UserId = u.UserId,
+                        Username = u.UserName,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        Email = u.Email,
+                    }
+                };
+
+            List<DocumentUserDto> result = await query.ToListAsync();
+            return result;
         }
 
     }

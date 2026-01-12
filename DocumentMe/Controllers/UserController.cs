@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DocumentMe.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/users")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -18,7 +18,7 @@ namespace DocumentMe.API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost, Route("CreateUser")]
+        [HttpPost]
         public async Task<IActionResult> CreateUser(SignUpRequest userDto)
         {
             var response = await _userService.CreateUser(userDto);
@@ -45,7 +45,7 @@ namespace DocumentMe.API.Controllers
         //}
 
         [AllowAnonymous]
-        [HttpPost("Authenticate")]
+        [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate(SignInRequest signInReq)
         {
             var response = await _userService.Authenticate(signInReq);

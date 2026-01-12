@@ -9,8 +9,9 @@ using Microsoft.Extensions.Localization;
 namespace DocumentMe.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    [Authorize]
+    [Route("api/documents")]
+    //[Authorize]
+    [AllowAnonymous]
     public class DocumentController : ControllerBase
     {
         private readonly IDocumentService _documentService;
@@ -21,21 +22,25 @@ namespace DocumentMe.API.Controllers
             _messagesLocalizer = localizer;
         }
 
-        [HttpPost("CreateDocument")]
+        [HttpPost]
         public async Task<IActionResult> CreateDocument()
         {
             var response = await _documentService.CreateDocument();
             return response.ToActionResult();
         }
 
-        [HttpPost("UpdateDocument")]
-        public async Task<IActionResult> UpdateDocument(DocumentDTO documentDTO)
+        [HttpPatch]
+        public async Task<IActionResult> UpdateDocument(DocumentUpsertDto documentUpsertDto)
         {
-            var response = await _documentService.UpdateDocument(documentDTO);
+            var response = await _documentService.UpdateDocument(documentUpsertDto);
             return response.ToActionResult();
         }
 
-
-        //This is for testing .....
+        [HttpGet]
+        public async Task<IActionResult> GetDocuments()
+        {
+            var response = await _documentService.GetDocuments();
+            return response.ToActionResult();
+        }
     }
 }

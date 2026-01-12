@@ -8,6 +8,7 @@ using DocumentMe.Utility.Helper;
 using DocumentMe.Utility.IUtility;
 using DocumentMe.Utility.Resource;
 using Microsoft.Extensions.Localization;
+using System.Collections.Generic;
 using System.Net;
 
 namespace DocumentMe.Service.Service.Public
@@ -30,17 +31,17 @@ namespace DocumentMe.Service.Service.Public
             _currentUser = currentUser;
         }
 
-        public async Task<ApiResponse<DocumentDTO>> CreateDocument()
+        public async Task<ApiResponse<DocumentUpsertDto>> CreateDocument()
         {
             string? userId = _currentUser.UserId;
             if (string.IsNullOrEmpty(userId))
             {
-                return new ApiResponse<DocumentDTO>(null, false, _messagesLocalizer["AuthAccessDenied"], HttpStatusCode.Forbidden);
+                return new ApiResponse<DocumentUpsertDto>(null, false, _messagesLocalizer["AuthAccessDenied"], HttpStatusCode.Forbidden);
             }
 
             if (!long.TryParse(userId, out long id))
             {
-                return new ApiResponse<DocumentDTO>(null, false, _messagesLocalizer["ErrorInternalServerError"], HttpStatusCode.InternalServerError);
+                return new ApiResponse<DocumentUpsertDto>(null, false, _messagesLocalizer["ErrorInternalServerError"], HttpStatusCode.InternalServerError);
             }
 
             DateTimeOffset now = DateTimeOffset.UtcNow;
@@ -65,40 +66,50 @@ namespace DocumentMe.Service.Service.Public
             };
             document = await _documentRepository.CreateDocument(document);
 
-            return ApiResponse<DocumentDTO>.Builder()
-                .Data(new DocumentDTO { Title = document.Title, DocumentId = document.DocumentId })
+            return ApiResponse<DocumentUpsertDto>.Builder()
+                .Data(new DocumentUpsertDto { Title = document.Title, DocumentId = document.DocumentId })
                 .Success(true)
                 .Message(_messagesLocalizer["ResponseSaveSuccess", _labelsLocalizer["Document"]])
                 .Code(HttpStatusCode.Created)
                 .Build();
         }
 
-        public async Task<ApiResponse<DocumentDTO>> UpdateDocument(DocumentDTO documentDTO)
+        public async Task<ApiResponse<DocumentUpsertDto>> UpdateDocument(DocumentUpsertDto documentUpsertDto)
         {
             string? userId = _currentUser.UserId;
             if (string.IsNullOrEmpty(userId))
-                return new ApiResponse<DocumentDTO>(null, false, _messagesLocalizer["AuthAccessDenied"], HttpStatusCode.Forbidden);
+                return new ApiResponse<DocumentUpsertDto>(null, false, _messagesLocalizer["AuthAccessDenied"], HttpStatusCode.Forbidden);
 
-            if (string.IsNullOrWhiteSpace(documentDTO.Title) || documentDTO.DocumentId == default)
-                return new ApiResponse<DocumentDTO>(null, false, _messagesLocalizer["ErrorMissingField"], HttpStatusCode.BadRequest);
+            if (string.IsNullOrWhiteSpace(documentUpsertDto.Title) || documentUpsertDto.DocumentId == default)
+                return new ApiResponse<DocumentUpsertDto>(null, false, _messagesLocalizer["ErrorMissingField"], HttpStatusCode.BadRequest);
 
-            Document? document = await _documentRepository.GetDocumentById(documentDTO.DocumentId);
+            Document? document = await _documentRepository.GetDocumentById(documentUpsertDto.DocumentId);
             if (document == null)
-                return new ApiResponse<DocumentDTO>(null, false, _messagesLocalizer["ErrorNotFound"], HttpStatusCode.BadRequest);
+                return new ApiResponse<DocumentUpsertDto>(null, false, _messagesLocalizer["ErrorNotFound"], HttpStatusCode.BadRequest);
 
             DateTimeOffset now = DateTimeOffset.UtcNow;
-            document.Title = documentDTO.Title;
+            document.Title = documentUpsertDto.Title;
             document.LastSeenAt = now;
             document.UpdatedAt = now;
 
-            if (!documentDTO.Title.StartsWith(Constants.MyNewDocumentWithSpace))
+            if (!documentUpsertDto.Title.StartsWith(Constants.MyNewDocumentWithSpace))
                 document.DefaultIndex = null;
 
             await _documentRepository.UpdateDocument(document);
-            return ApiResponse<DocumentDTO>.Builder()
-                .Data(documentDTO)
+            return ApiResponse<DocumentUpsertDto>.Builder()
+                .Data(documentUpsertDto)
                 .Success(true)
                 .Message(_messagesLocalizer["ResponseUpdateSuccess", _labelsLocalizer["Document"]])
+                .Code(HttpStatusCode.OK)
+                .Build();
+        }
+        public async Task<ApiResponse<List<DocumentUserDto>>> GetDocuments()
+        {
+            List<DocumentUserDto> result = await _documentRepository.GetDocuments();
+            return ApiResponse<List<DocumentUserDto>>.Builder()
+                .Data(result)
+                .Success(true)
+                .Message(_messagesLocalizer["ResponseRetrieveSuccess"])
                 .Code(HttpStatusCode.OK)
                 .Build();
         }
