@@ -28,6 +28,16 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            // Read token from HttpOnly cookie instead of header
+            context.Token = context.Request.Cookies["access_token"];
+            return Task.CompletedTask;
+        }
+    };
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
@@ -76,10 +86,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngular",
     policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
-        .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
+        policy.WithOrigins("https://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 

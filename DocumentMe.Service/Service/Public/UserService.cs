@@ -63,37 +63,35 @@ namespace DocumentMe.Service.Service.Public
             return new ApiResponse<bool>(true, true, _messagesLocalizer["ResponseSaveSuccess", _labelsLocalizer["User"]], HttpStatusCode.Created);
         }
 
-        //public async Task<SignInResponse> Authenticate(SignInRequest signInReq)
-        //{
-        //    var (token, user) = await AuthenticateHelper(signInReq);
-        //    if (string.IsNullOrEmpty(token) || user == null)
-        //        return new SignInResponse
-        //        {
-        //            AccessToken = string.Empty,
-        //            User = new ApiResponse<UserDto>(null, false, _messagesLocalizer["AuthSignInInvalid"], HttpStatusCode.BadRequest)
-        //        };
-
-
-        //    UserDto userDto = _mapper.Map(user, new UserDto());
-        //    return new SignInResponse
-        //    {
-        //        AccessToken = token,
-        //        User = new ApiResponse<UserDto>(userDto, true, _messagesLocalizer["AuthSignInSuccess"], HttpStatusCode.OK)
-        //    };
-        //}
-
-        public async Task<ApiResponse<SignInResponse>> Authenticate(SignInRequest signInReq)
+        public async Task<SignInResponse> Authenticate(SignInRequest signInReq)
         {
             User? user = await _userRepository.GetUserByUserName(signInReq.UserName);
             if (user == null)
-                return new ApiResponse<SignInResponse>(null, false, _messagesLocalizer["AuthSignInInvalid"], HttpStatusCode.BadRequest);
+            {
+                return new SignInResponse
+                {
+                    AccessToken = null,
+                    User = new ApiResponse<UserDto>(null, false, _messagesLocalizer["AuthSignInInvalid"], HttpStatusCode.BadRequest)
+                };
+            }
 
             string? token = AuthenticateHelper(signInReq, user);
             if (string.IsNullOrEmpty(token))
-                return new ApiResponse<SignInResponse>(null, false, _messagesLocalizer["AuthSignInInvalid"], HttpStatusCode.BadRequest);
+            {
+                return new SignInResponse
+                {
+                    AccessToken = null,
+                    User = new ApiResponse<UserDto>(null, false, _messagesLocalizer["AuthSignInInvalid"], HttpStatusCode.BadRequest)
+                };
+            }
 
             UserDto userDto = _mapper.Map(user, new UserDto());
-            return new ApiResponse<SignInResponse>(new SignInResponse { AccessToken = token, User = userDto }, true, _messagesLocalizer["AuthSignInSuccess"], HttpStatusCode.OK);
+
+            return new SignInResponse
+            {
+                AccessToken = token,
+                User = new ApiResponse<UserDto>(userDto, true, _messagesLocalizer["AuthSignInSuccess"], HttpStatusCode.OK)
+            };
         }
 
         private string? AuthenticateHelper(SignInRequest signInReq, User user)
