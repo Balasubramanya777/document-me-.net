@@ -147,4 +147,7 @@
   <data name="ErrorNotFound" xml:space="preserve">
     <value>Record not found.</value>
   </data>
+  <data name="AuthSignOutSuccess" xml:space="preserve">
+    <value>User signed out successfully.</value>
+  </data>
 </root>

@@ -10,8 +10,7 @@ namespace DocumentMe.API.Controllers
 {
     [ApiController]
     [Route("api/documents")]
-    //[Authorize]
-    [AllowAnonymous]
+    [Authorize]
     public class DocumentController : ControllerBase
     {
         private readonly IDocumentService _documentService;
