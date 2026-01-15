@@ -8,6 +8,7 @@ using Microsoft.Extensions.Localization;
 
 namespace DocumentMe.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/users")]
     public class UserController : ControllerBase
@@ -19,13 +20,6 @@ namespace DocumentMe.API.Controllers
         {
             _userService = userService;
             _messagesLocalizer = localizer;
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateUser(SignUpRequest userDto)
-        {
-            var response = await _userService.CreateUser(userDto);
-            return response.ToActionResult();
         }
 
         [AllowAnonymous]
@@ -46,6 +40,13 @@ namespace DocumentMe.API.Controllers
             return signInResponse.User.ToActionResult();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateUser(SignUpRequest userDto)
+        {
+            var response = await _userService.CreateUser(userDto);
+            return response.ToActionResult();
+        }
+
         [HttpPost("logout")]
         public IActionResult Logout()
         {
@@ -58,6 +59,12 @@ namespace DocumentMe.API.Controllers
             });
 
             return Ok(_messagesLocalizer["AuthSignOutSuccess"]);
+        }
+
+        [HttpGet("me")]
+        public IActionResult Me()
+        {
+            return Ok();
         }
     }
 }
