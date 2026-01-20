@@ -75,5 +75,36 @@ namespace DocumentMe.Repository.Repository.Public
             return result;
         }
 
+        public async Task<bool> CreateContent(List<DocumentUpdate> updates)
+        {
+            try
+            {
+                await _context.DocumentUpdates.AddRangeAsync(updates);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<ContentDto?> GetContent(long DocumentId)
+        {
+
+            return await _context.Documents
+                .Where(d => d.DocumentId == DocumentId)
+                .Select(d => new ContentDto
+                {
+                    DocumentId = d.DocumentId,
+                    Title = d.Title,
+                    Updates = d.DocumentUpdates
+                        .OrderBy(u => u.DocumentUpdateId)
+                        .Select(u => u.Content)
+                        .ToList()
+                })
+                .FirstOrDefaultAsync();
+        }
+
     }
 }

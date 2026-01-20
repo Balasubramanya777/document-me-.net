@@ -40,6 +40,7 @@ namespace DocumentMe.API.Controllers
             return signInResponse.User.ToActionResult();
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreateUser(SignUpRequest userDto)
         {

@@ -15,7 +15,7 @@ namespace DocumentMe.DataAccessLayer.Entity.Public
         public long DocumentId { get; set; }
 
         [Column("content")]
-        public byte[]? Content { get; set; }
+        public byte[] Content { get; set; } = [];
 
         [Column("created_by")]
         public long? CreatedBy { get; set; }
@@ -23,7 +23,12 @@ namespace DocumentMe.DataAccessLayer.Entity.Public
         [Column("created_at")]
         public DateTimeOffset? CreatedAt { get; set; }
 
+
+
+        [ForeignKey(nameof(DocumentId))]
         public virtual Document? Document { get; set; }
+
+        [ForeignKey(nameof(CreatedBy))]
         public virtual User? CreatedByNavigation { get; set; }
     }
 }

@@ -39,7 +39,7 @@ namespace DocumentMe.Service.Service.Public
         public async Task<ApiResponse<bool>> CreateUser(SignUpRequest userDto)
         {
             if (string.IsNullOrWhiteSpace(userDto.UserName) || string.IsNullOrWhiteSpace(userDto.FirstName) || string.IsNullOrWhiteSpace(userDto.LastName)
-                 || string.IsNullOrWhiteSpace(userDto.Email) || string.IsNullOrWhiteSpace(userDto.Password))
+                 || string.IsNullOrWhiteSpace(userDto.Password))
                 return new ApiResponse<bool>(false, false, _messagesLocalizer["AuthSignInInvalid"], HttpStatusCode.BadRequest);
 
             User? isExist = await _userRepository.GetUserByUserName(userDto.UserName);
@@ -53,7 +53,6 @@ namespace DocumentMe.Service.Service.Public
                 UserName = userDto.UserName,
                 FirstName = userDto.FirstName,
                 LastName = userDto.LastName,
-                Email = userDto.Email,
                 Password = hashedPassword,
                 IsActive = true,
                 CreatedAt = DateTimeOffset.UtcNow,

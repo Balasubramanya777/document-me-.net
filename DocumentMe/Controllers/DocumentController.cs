@@ -41,5 +41,20 @@ namespace DocumentMe.API.Controllers
             var response = await _documentService.GetDocuments();
             return response.ToActionResult();
         }
+
+        [HttpPost("content")]
+        public async Task<IActionResult> CreateContent(ContentCreateDto contentDto)
+        {
+            var response = await _documentService.CreateContent(contentDto);
+            return response.ToActionResult();
+        }
+
+        [HttpGet("content/{id:long}")]
+        public async Task<IActionResult> GetContent(long id)
+        {
+            var response = await _documentService.GetContent(id);
+            return response.ToActionResult();
+        }
+
     }
 }
