@@ -8,5 +8,7 @@ namespace DocumentMe.Service.IService.Public
         Task<ApiResponse<DocumentUpsertDto>> CreateDocument();
         Task<ApiResponse<DocumentUpsertDto>> UpdateDocument(DocumentUpsertDto documentUpsertDto);
         Task<ApiResponse<List<DocumentUserDto>>> GetDocuments();
+        Task<ApiResponse<bool>> CreateContent(ContentCreateDto contentDto);
+        Task<ApiResponse<ContentDto>> GetContent(long DocumentId);
     }
 }

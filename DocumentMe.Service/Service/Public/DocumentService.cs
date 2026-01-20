@@ -8,7 +8,6 @@ using DocumentMe.Utility.Helper;
 using DocumentMe.Utility.IUtility;
 using DocumentMe.Utility.Resource;
 using Microsoft.Extensions.Localization;
-using System.Collections.Generic;
 using System.Net;
 
 namespace DocumentMe.Service.Service.Public
@@ -108,6 +107,59 @@ namespace DocumentMe.Service.Service.Public
             List<DocumentUserDto> result = await _documentRepository.GetDocuments();
             return ApiResponse<List<DocumentUserDto>>.Builder()
                 .Data(result)
+                .Success(true)
+                .Message(_messagesLocalizer["ResponseRetrieveSuccess"])
+                .Code(HttpStatusCode.OK)
+                .Build();
+        }
+
+        public async Task<ApiResponse<bool>> CreateContent(ContentCreateDto contentDto)
+        {
+            string? userId = _currentUser.UserId;
+            if (string.IsNullOrEmpty(userId))
+                return new ApiResponse<bool>(false, false, _messagesLocalizer["AuthAccessDenied"], HttpStatusCode.Forbidden);
+
+            if (!long.TryParse(userId, out long id))
+                return new ApiResponse<bool>(false, false, _messagesLocalizer["ErrorInternalServerError"], HttpStatusCode.InternalServerError);
+
+
+            List<DocumentUpdate> updates = [];
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+            if (contentDto.Updates != null && contentDto.Updates.Count > default(int))
+            {
+                foreach (string update in contentDto.Updates)
+                {
+                    DocumentUpdate docUpdate = new()
+                    {
+                        DocumentId = contentDto.DocumentId,
+                        Content = Convert.FromBase64String(update),
+                        CreatedBy = id,
+                        CreatedAt = now,
+                    };
+                    updates.Add(docUpdate);
+                }
+                bool isSuccess = await _documentRepository.CreateContent(updates);
+                if (!isSuccess)
+                    return new ApiResponse<bool>(false, false, _messagesLocalizer["ErrorInternalServerError"], HttpStatusCode.InternalServerError);
+
+            }
+
+            return ApiResponse<bool>.Builder()
+                .Data(true)
+                .Success(true)
+                .Message(_messagesLocalizer["ResponseSaveSuccess", _labelsLocalizer["Content"]])
+                .Code(HttpStatusCode.Created)
+                .Build();
+        }
+
+        public async Task<ApiResponse<ContentDto>> GetContent(long DocumentId)
+        {
+            ContentDto? content = await _documentRepository.GetContent(DocumentId);
+            if (content == null)
+                return new ApiResponse<ContentDto>(null, false, _messagesLocalizer["ErrorInternalServerError"], HttpStatusCode.InternalServerError);
+
+            return ApiResponse<ContentDto>.Builder()
+                .Data(content)
                 .Success(true)
                 .Message(_messagesLocalizer["ResponseRetrieveSuccess"])
                 .Code(HttpStatusCode.OK)

@@ -30,7 +30,11 @@ namespace DocumentMe.DataAccessLayer.Entity.Public
         [Column("updated_at")]
         public DateTimeOffset? UpdatedAt { get; set; }
 
+
+
         [ForeignKey(nameof(CreatedBy))]
         public virtual User? User { get; set; }
+
+        public virtual List<DocumentUpdate> DocumentUpdates { get; set; } = [];
     }
 }
