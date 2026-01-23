@@ -51,7 +51,7 @@ namespace DocumentMe.Repository.Repository.Public
                     .AnyAsync();
         }
 
-        public async Task<List<DocumentUserDto>> GetDocuments()
+        public async Task<List<DocumentUserDto>> GetDocuments(string? title)
         {
             IQueryable<DocumentUserDto> query =
                 from d in _context.Documents
@@ -70,6 +70,9 @@ namespace DocumentMe.Repository.Repository.Public
                         Email = u.Email,
                     }
                 };
+
+            if(!string.IsNullOrWhiteSpace(title))
+                query = query.Where(d => d.Title.Contains(title));
 
             List<DocumentUserDto> result = await query.ToListAsync();
             return result;

@@ -36,9 +36,9 @@ namespace DocumentMe.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetDocuments()
+        public async Task<IActionResult> GetDocuments([FromQuery] string? title)
         {
-            var response = await _documentService.GetDocuments();
+            var response = await _documentService.GetDocuments(title);
             return response.ToActionResult();
         }
 
