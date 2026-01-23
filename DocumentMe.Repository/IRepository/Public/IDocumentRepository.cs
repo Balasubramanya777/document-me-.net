@@ -10,7 +10,7 @@ namespace DocumentMe.Repository.IRepository.Public
         Task<Document?> GetDocumentById(long documentId);
         Task<int?> GetDefaultIndex(long createdBy);
         Task<bool> IsDocumentExist(string title, long documentId, long createdBy);
-        Task<List<DocumentUserDto>> GetDocuments();
+        Task<List<DocumentUserDto>> GetDocuments(string? title)
         Task<bool> CreateContent(List<DocumentUpdate> updates);
         Task<ContentDto?> GetContent(long DocumentId);
     }
