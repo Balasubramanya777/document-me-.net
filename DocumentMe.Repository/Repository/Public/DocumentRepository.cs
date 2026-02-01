@@ -44,10 +44,10 @@ namespace DocumentMe.Repository.Repository.Public
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<bool> IsDocumentExist(string title)
+        public async Task<bool> IsDocumentExist(string title, long documentId)
         {
             return await _context.Documents
-                    .Where(x => x.Title.Equals(title))
+                    .Where(x => x.Title.Equals(title) && x.DocumentId != documentId)
                     .AnyAsync();
         }
 

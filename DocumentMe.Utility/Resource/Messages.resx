@@ -121,7 +121,7 @@
     <value>Access denied.</value>
   </data>
   <data name="ErrorAlreadyExistsWith" xml:space="preserve">
-    <value>{0} already exists with {1} "{2}".</value>
+    <value>{0} already exists with {1} "{2}"</value>
   </data>
   <data name="ErrorInternalServerError" xml:space="preserve">
     <value>Internal server error.</value>

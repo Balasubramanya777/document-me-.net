@@ -97,7 +97,7 @@ namespace DocumentMe.Utility.Resource {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} already exists with {1} &quot;{2}&quot;..
+        ///   Looks up a localized string similar to {0} already exists with {1} &quot;{2}&quot;.
         /// </summary>
         internal static string ErrorAlreadyExistsWith {
             get {
