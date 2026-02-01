@@ -99,9 +99,9 @@ namespace DocumentMe.Service.Service.Public
                 .Code(HttpStatusCode.OK)
                 .Build();
         }
-        public async Task<ApiResponse<List<DocumentUserDto>>> GetDocuments()
+        public async Task<ApiResponse<List<DocumentUserDto>>> GetDocuments(string? title)
         {
-            List<DocumentUserDto> result = await _documentRepository.GetDocuments();
+            List<DocumentUserDto> result = await _documentRepository.GetDocuments(title);
             return ApiResponse<List<DocumentUserDto>>.Builder()
                 .Data(result)
                 .Success(true)
