@@ -35,19 +35,19 @@ namespace DocumentMe.Repository.Repository.Public
             return await _context.Documents.Where(x => x.DocumentId == documentId).FirstOrDefaultAsync();
         }
 
-        public async Task<int?> GetDefaultIndex(long createdBy)
+        public async Task<int?> GetDefaultIndex()
         {
             return await _context.Documents
-                .Where(x => x.CreatedBy == createdBy && x.Title.StartsWith(Constants.MyNewDocumentWithSpace))
+                .Where(x => x.Title.StartsWith(Constants.MyNewDocumentWithSpace))
                 .OrderByDescending(x => x.DocumentId)
                 .Select(x => x.DefaultIndex)
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<bool> IsDocumentExist(string title, long documentId, long createdBy)
+        public async Task<bool> IsDocumentExist(string title)
         {
             return await _context.Documents
-                    .Where(x => x.Title.Equals(title) && x.CreatedBy == createdBy && x.DocumentId != documentId)
+                    .Where(x => x.Title.Equals(title))
                     .AnyAsync();
         }
 
