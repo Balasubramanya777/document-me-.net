@@ -34,17 +34,13 @@ namespace DocumentMe.Service.Service.Public
         {
             string? userId = _currentUser.UserId;
             if (string.IsNullOrEmpty(userId))
-            {
                 return new ApiResponse<DocumentUpsertDto>(null, false, _messagesLocalizer["AuthAccessDenied"], HttpStatusCode.Forbidden);
-            }
 
             if (!long.TryParse(userId, out long id))
-            {
                 return new ApiResponse<DocumentUpsertDto>(null, false, _messagesLocalizer["ErrorInternalServerError"], HttpStatusCode.InternalServerError);
-            }
 
             DateTimeOffset now = DateTimeOffset.UtcNow;
-            int? defaultIndex = await _documentRepository.GetDefaultIndex(id);
+            int? defaultIndex = await _documentRepository.GetDefaultIndex();
 
             if (defaultIndex != null)
             {
@@ -82,6 +78,10 @@ namespace DocumentMe.Service.Service.Public
             if (string.IsNullOrWhiteSpace(documentUpsertDto.Title) || documentUpsertDto.DocumentId == default)
                 return new ApiResponse<DocumentUpsertDto>(null, false, _messagesLocalizer["ErrorMissingField"], HttpStatusCode.BadRequest);
 
+            bool isExist =await _documentRepository.IsDocumentExist(documentUpsertDto.Title, documentUpsertDto.DocumentId);
+            if(isExist)
+                return new ApiResponse<DocumentUpsertDto>(null, false, _messagesLocalizer["ErrorAlreadyExistsWith", _labelsLocalizer["Document"], _labelsLocalizer["Title"], documentUpsertDto.Title], HttpStatusCode.BadRequest);
+
             Document? document = await _documentRepository.GetDocumentById(documentUpsertDto.DocumentId);
             if (document == null)
                 return new ApiResponse<DocumentUpsertDto>(null, false, _messagesLocalizer["ErrorNotFound"], HttpStatusCode.BadRequest);
@@ -90,9 +90,6 @@ namespace DocumentMe.Service.Service.Public
             document.Title = documentUpsertDto.Title;
             document.LastSeenAt = now;
             document.UpdatedAt = now;
-
-            if (!documentUpsertDto.Title.StartsWith(Constants.MyNewDocumentWithSpace))
-                document.DefaultIndex = null;
 
             await _documentRepository.UpdateDocument(document);
             return ApiResponse<DocumentUpsertDto>.Builder()
@@ -152,11 +149,18 @@ namespace DocumentMe.Service.Service.Public
                 .Build();
         }
 
-        public async Task<ApiResponse<ContentDto>> GetContent(long DocumentId)
+        public async Task<ApiResponse<ContentDto>> GetContent(long documentId)
         {
-            ContentDto? content = await _documentRepository.GetContent(DocumentId);
+            ContentDto? content = await _documentRepository.GetContent(documentId);
             if (content == null)
                 return new ApiResponse<ContentDto>(null, false, _messagesLocalizer["ErrorInternalServerError"], HttpStatusCode.InternalServerError);
+
+            Document? document = await _documentRepository.GetDocumentById(documentId);
+            if (document == null)
+                return new ApiResponse<ContentDto>(null, false, _messagesLocalizer["ErrorInternalServerError"], HttpStatusCode.InternalServerError);
+
+            document.LastSeenAt = DateTimeOffset.UtcNow;
+            await _documentRepository.UpdateDocument(document);
 
             return ApiResponse<ContentDto>.Builder()
                 .Data(content)
