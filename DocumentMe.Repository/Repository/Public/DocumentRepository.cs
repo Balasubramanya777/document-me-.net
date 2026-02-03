@@ -56,6 +56,7 @@ namespace DocumentMe.Repository.Repository.Public
             IQueryable<DocumentUserDto> query =
                 from d in _context.Documents
                 join u in _context.Users on d.CreatedBy equals u.UserId
+                orderby d.LastSeenAt descending
                 select new DocumentUserDto
                 {
                     DocumentId = d.DocumentId,

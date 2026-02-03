@@ -5,5 +5,6 @@
         public long DocumentId { get; set; }
         public string? Title { get; set; }
         public List<byte[]> Updates { get; set; } = [];
+        public string? Snapshot { get; set; }
     }
 }
