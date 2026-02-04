@@ -1,14 +1,15 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using Base.DataAccessLayer.DTO.Base;
 using DocumentMe.DataAccessLayer.DTO.Document;
 using DocumentMe.DataAccessLayer.Entity.Public;
 using DocumentMe.Repository.IRepository.Public;
+using DocumentMe.Repository.Repository.Public;
 using DocumentMe.Service.IService.Public;
 using DocumentMe.Utility.Helper;
 using DocumentMe.Utility.IUtility;
 using DocumentMe.Utility.Resource;
 using Microsoft.Extensions.Localization;
-using System.Net;
 
 namespace DocumentMe.Service.Service.Public
 {
@@ -19,15 +20,17 @@ namespace DocumentMe.Service.Service.Public
         private readonly IDocumentRepository _documentRepository;
         private readonly IMapper _mapper;
         private readonly ICurrentUser _currentUser;
+        private readonly IUnitOfWork _unitOfWork;
 
         public DocumentService(IDocumentRepository documentRepository, IMapper mapper, IStringLocalizer<Messages> messagesLocalizer, IStringLocalizer<Labels> labelsLocalizer,
-            ICurrentUser currentUser)
+            ICurrentUser currentUser, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
             _documentRepository = documentRepository;
             _messagesLocalizer = messagesLocalizer;
             _labelsLocalizer = labelsLocalizer;
             _currentUser = currentUser;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ApiResponse<DocumentUpsertDto>> CreateDocument()
@@ -78,8 +81,8 @@ namespace DocumentMe.Service.Service.Public
             if (string.IsNullOrWhiteSpace(documentUpsertDto.Title) || documentUpsertDto.DocumentId == default)
                 return new ApiResponse<DocumentUpsertDto>(null, false, _messagesLocalizer["ErrorMissingField"], HttpStatusCode.BadRequest);
 
-            bool isExist =await _documentRepository.IsDocumentExist(documentUpsertDto.Title, documentUpsertDto.DocumentId);
-            if(isExist)
+            bool isExist = await _documentRepository.IsDocumentExist(documentUpsertDto.Title, documentUpsertDto.DocumentId);
+            if (isExist)
                 return new ApiResponse<DocumentUpsertDto>(null, false, _messagesLocalizer["ErrorAlreadyExistsWith", _labelsLocalizer["Document"], _labelsLocalizer["Title"], documentUpsertDto.Title], HttpStatusCode.BadRequest);
 
             Document? document = await _documentRepository.GetDocumentById(documentUpsertDto.DocumentId);
@@ -122,31 +125,55 @@ namespace DocumentMe.Service.Service.Public
 
             List<DocumentUpdate> updates = [];
             DateTimeOffset now = DateTimeOffset.UtcNow;
-            if (contentDto.Updates != null && contentDto.Updates.Count > default(int))
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
             {
-                foreach (string update in contentDto.Updates)
+                //Snapshot
+                if (!string.IsNullOrWhiteSpace(contentDto.Snapshot))
                 {
-                    DocumentUpdate docUpdate = new()
-                    {
-                        DocumentId = contentDto.DocumentId,
-                        Content = Convert.FromBase64String(update),
-                        CreatedBy = id,
-                        CreatedAt = now,
-                    };
-                    updates.Add(docUpdate);
+                    byte[] snapshotBytes = Convert.FromBase64String(contentDto.Snapshot);
+                    await _documentRepository.UpsertSnapshot(contentDto.DocumentId, snapshotBytes);
+                    await _documentRepository.DeleteAllUpdates(contentDto.DocumentId);
                 }
-                bool isSuccess = await _documentRepository.CreateContent(updates);
-                if (!isSuccess)
-                    return new ApiResponse<bool>(false, false, _messagesLocalizer["ErrorInternalServerError"], HttpStatusCode.InternalServerError);
 
-            }
+                //Updates
+                if (contentDto.Updates != null && contentDto.Updates.Count > default(int))
+                {
+                    foreach (string update in contentDto.Updates)
+                    {
+                        DocumentUpdate docUpdate = new()
+                        {
+                            DocumentId = contentDto.DocumentId,
+                            Content = Convert.FromBase64String(update),
+                            CreatedBy = id,
+                            CreatedAt = now,
+                        };
+                        updates.Add(docUpdate);
+                    }
+                    _documentRepository.CreateContent(updates);
+                }
 
-            return ApiResponse<bool>.Builder()
+                await _unitOfWork.CommitAsync();
+
+                return ApiResponse<bool>.Builder()
                 .Data(true)
                 .Success(true)
                 .Message(_messagesLocalizer["ResponseSaveSuccess", _labelsLocalizer["Content"]])
                 .Code(HttpStatusCode.Created)
                 .Build();
+            }
+            catch
+            {
+                await _unitOfWork.RollbackAsync();
+
+                return ApiResponse<bool>.Builder()
+                .Data(false)
+                .Success(false)
+                .Message(_messagesLocalizer["ErrorInternalServerError"])
+                .Code(HttpStatusCode.InternalServerError)
+                .Build();
+            }
         }
 
         public async Task<ApiResponse<ContentDto>> GetContent(long documentId)

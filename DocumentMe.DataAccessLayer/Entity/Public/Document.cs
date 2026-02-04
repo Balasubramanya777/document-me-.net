@@ -36,5 +36,6 @@ namespace DocumentMe.DataAccessLayer.Entity.Public
         public virtual User? User { get; set; }
 
         public virtual List<DocumentUpdate> DocumentUpdates { get; set; } = [];
+        public virtual DocumentSnapshot? DocumentSnapshot { get; set; }
     }
 }
