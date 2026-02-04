@@ -20,6 +20,7 @@ namespace DocumentMe.DataAccessLayer.Entity.Public
         public DateTimeOffset? UpdatedAt { get; set; }
 
 
+        [ForeignKey(nameof(DocumentId))]
         public virtual Document? Document { get; set; }
     }
 }

@@ -11,7 +11,9 @@ namespace DocumentMe.Repository.IRepository.Public
         Task<int?> GetDefaultIndex();
         Task<bool> IsDocumentExist(string title, long documentId);
         Task<List<DocumentUserDto>> GetDocuments(string? title);
-        Task<bool> CreateContent(List<DocumentUpdate> updates);
+        void CreateContent(List<DocumentUpdate> updates);
         Task<ContentDto?> GetContent(long DocumentId);
+        Task UpsertSnapshot(long documentId, byte[] snapshotBytes);
+        Task DeleteAllUpdates(long documentId);
     }
 }
