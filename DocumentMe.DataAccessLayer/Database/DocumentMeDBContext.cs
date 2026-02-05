@@ -11,7 +11,6 @@ namespace DocumentMe.DataAccessLayer.Database
         public DbSet<User> Users { get; set; }
         public DbSet<Document> Documents { get; set; }
         public DbSet<DocumentUpdate> DocumentUpdates { get; set; }
-        public DbSet<DocumentPermission> DocumentPermissions { get; set; }
         public DbSet<DocumentSnapshot> DocumentSnapshots { get; set; }
     }
 }
