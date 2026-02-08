@@ -84,12 +84,13 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+var frontendUrl = builder.Configuration["FrontendUrl"] ?? "*";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
     policy =>
     {
-        policy.WithOrigins(builder.Configuration["FrontendUrl"]!)
+        policy.WithOrigins(frontendUrl)
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
