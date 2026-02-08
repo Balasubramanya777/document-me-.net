@@ -84,16 +84,33 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-var frontendUrl = builder.Configuration["FrontendUrl"] ?? "*";
+var frontendUrl = builder.Configuration["FrontendUrl"];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
     policy =>
     {
-        policy.WithOrigins(frontendUrl)
+        if (!string.IsNullOrEmpty(frontendUrl))
+        {
+            policy.WithOrigins(frontendUrl)
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
+        }
+        else if (builder.Environment.IsDevelopment())
+        {
+            policy.WithOrigins("http://localhost:4200")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        }
+        else
+        {
+            throw new InvalidOperationException(
+                "FrontendUrl environment variable must be set in Production for CORS."
+            );
+        }
     });
 });
 
