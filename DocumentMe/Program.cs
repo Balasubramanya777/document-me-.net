@@ -9,6 +9,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add environment variables so Docker/Render env vars are picked up
+builder.Configuration.AddEnvironmentVariables();
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -86,7 +89,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngular",
     policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(builder.Configuration["FrontendUrl"]!)
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -103,9 +106,8 @@ if (app.Environment.IsDevelopment())
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "n.balasubramanya v1");
     });
+    app.UseHttpsRedirection();
 }
-
-app.UseHttpsRedirection();
 
 app.UseCors("AllowAngular");
 
