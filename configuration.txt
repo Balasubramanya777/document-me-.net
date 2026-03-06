@@ -1,0 +1,22 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "DocumentMeConnectionSring": "Host=localhost;Port=5432;Username=postgres;Password=root;Database=document_me"
+    //"DocumentMeConnectionSring": "Host=db.utqksdatuddzwwhmppwo.supabase.co;Port=5432;Username=postgres;Password=Yeson@roman777;Database=postgres"
+  },
+  "JwtSettings": {
+    "Issuer": "n.balasubramanya.company",
+    "Audience": "frontend.OrClient.OrBrowser",
+    "Key": "documentMeBalasubramanyaSecretKey"
+  },
+  "Cors": {
+    "AllowedOrigins": [
+      "http://localhost:4200"
+    ]
+  }
+}
