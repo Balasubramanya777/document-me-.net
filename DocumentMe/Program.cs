@@ -84,33 +84,20 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-var frontendUrl = builder.Configuration["FrontendUrl"];
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
     policy =>
     {
-        if (!string.IsNullOrEmpty(frontendUrl))
-        {
-            policy.WithOrigins(frontendUrl)
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
-        }
-        else if (builder.Environment.IsDevelopment())
-        {
-            policy.WithOrigins("http://localhost:4200")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
-        }
-        else
-        {
-            throw new InvalidOperationException(
-                "FrontendUrl environment variable must be set in Production for CORS."
-            );
-        }
+        policy.WithOrigins(allowedOrigins!)
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+
     });
 });
 
@@ -124,8 +111,9 @@ if (app.Environment.IsDevelopment())
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "n.balasubramanya v1");
     });
-    app.UseHttpsRedirection();
 }
+
+app.UseHttpsRedirection();
 
 app.UseCors("AllowAngular");
 
