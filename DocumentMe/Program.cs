@@ -84,20 +84,14 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-var allowedOrigins = builder.Configuration
-    .GetSection("Cors:AllowedOrigins")
-    .Get<string[]>();
-
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngular",
-    policy =>
+    options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins(allowedOrigins!)
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
-
+        policy.SetIsOriginAllowed(_ => true)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
