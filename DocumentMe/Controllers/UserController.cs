@@ -72,7 +72,7 @@ namespace DocumentMe.API.Controllers
         [HttpGet ("lord")]
         public IActionResult Lord()
         {
-         return "Lord is above all!";
+         return Ok("Lord is above all!");
         }
     }
 }
