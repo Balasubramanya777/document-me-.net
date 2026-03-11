@@ -67,5 +67,12 @@ namespace DocumentMe.API.Controllers
         {
             return Ok();
         }
+
+        [AllowAnonymous]
+        [HttpGet ("lord")]
+        public IActionResult Lord()
+        {
+         return "Lord is above all!";
+        }
     }
 }
