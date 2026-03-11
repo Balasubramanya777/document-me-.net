@@ -55,7 +55,7 @@ namespace DocumentMe.API.Controllers
             {
                 HttpOnly = true,
                 Secure = true, //true for prod
-                SameSite = SameSiteMode.Strict,//SameSiteMode.Strict for prod
+                SameSite = SameSiteMode.None,//SameSiteMode.Strict for prod or None
                 Expires = DateTimeOffset.UtcNow.AddHours(-1)
             });
 
