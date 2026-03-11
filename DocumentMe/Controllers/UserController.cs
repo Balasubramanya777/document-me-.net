@@ -8,7 +8,7 @@ using Microsoft.Extensions.Localization;
 
 namespace DocumentMe.API.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/users")]
     public class UserController : ControllerBase
