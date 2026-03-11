@@ -54,8 +54,8 @@ namespace DocumentMe.API.Controllers
             Response.Cookies.Append("access_token", string.Empty, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false, //true for prod
-                SameSite = SameSiteMode.Lax,//SameSiteMode.Strict for prod
+                Secure = true, //true for prod
+                SameSite = SameSiteMode.Strict,//SameSiteMode.Strict for prod
                 Expires = DateTimeOffset.UtcNow.AddHours(-1)
             });
 
