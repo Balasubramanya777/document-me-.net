@@ -88,6 +88,8 @@ var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
     .Get<string[]>();
 
+Console.WriteLine($"Origins loaded: {string.Join(",", allowedOrigins ?? [])}");
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
