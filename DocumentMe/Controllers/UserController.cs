@@ -54,8 +54,8 @@ namespace DocumentMe.API.Controllers
             Response.Cookies.Delete("access_token", new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false, //true for prod - false for dev
-                SameSite = SameSiteMode.Lax,//SameSiteMode.Strict for prod - SameSiteMode.Lax for dev
+                Secure = true, //true for prod - false for dev
+                SameSite = SameSiteMode.Strict,//SameSiteMode.Strict for prod - SameSiteMode.Lax for dev
             });
 
             return Ok(_messagesLocalizer["AuthSignOutSuccess"]);
