@@ -51,12 +51,11 @@ namespace DocumentMe.API.Controllers
         [HttpPost("logout")]
         public IActionResult Logout()
         {
-            Response.Cookies.Append("access_token", string.Empty, new CookieOptions
+            Response.Cookies.Delete("access_token", new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true, //true for prod
-                SameSite = SameSiteMode.None,//SameSiteMode.Strict for prod or None
-                Expires = DateTimeOffset.UtcNow.AddHours(-1)
+                Secure = false, //true for prod - false for dev
+                SameSite = SameSiteMode.Lax,//SameSiteMode.Strict for prod - SameSiteMode.Lax for dev
             });
 
             return Ok(_messagesLocalizer["AuthSignOutSuccess"]);
@@ -66,13 +65,6 @@ namespace DocumentMe.API.Controllers
         public IActionResult Me()
         {
             return Ok();
-        }
-
-        [AllowAnonymous]
-        [HttpGet ("lord")]
-        public IActionResult Lord()
-        {
-         return Ok("Lord is above all!");
         }
     }
 }
