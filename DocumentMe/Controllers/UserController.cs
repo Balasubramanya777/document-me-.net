@@ -33,7 +33,7 @@ namespace DocumentMe.API.Controllers
                 {
                     HttpOnly = true,
                     Secure = true, //true for prod - false for dev
-                    SameSite = SameSiteMode.Strict,//SameSiteMode.Strict for prod - SameSiteMode.Lax for dev
+                    SameSite = SameSiteMode.None,//SameSiteMode.None for prod - SameSiteMode.Lax for dev
                     Expires = DateTimeOffset.UtcNow.AddHours(1)
                 });
             }
