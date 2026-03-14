@@ -1,13 +1,48 @@
 using DocumentMe.API.Initiator;
+using DocumentMe.API.Middleware;
 using DocumentMe.DataAccessLayer.Database;
 using DocumentMe.Service.Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Events;
+using System.Collections;
 using System.Text;
 
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
+
+Log.Error("                                                                                                                ");
+Log.Error("****************************************************************************************************************");
+Log.Error("                                                                                                                ");
+Log.Error("################################################################################################################");
+Log.Error("                                                                                                                ");
+
+Log.Information("Balasubramanya - Document Me application is starting...");
+Log.Information("Balasubramanya - Environment: {Environment}", builder.Environment.EnvironmentName);
+
+foreach (DictionaryEntry env in Environment.GetEnvironmentVariables())
+{
+    Log.Information("ENV {Key} = {Value}", env.Key, env.Value);
+}
+
+Log.Error("                                                                                                                ");
+Log.Error("################################################################################################################");
+Log.Error("                                                                                                                ");
+Log.Error("****************************************************************************************************************");
+Log.Error("                                                                                                                ");
 
 // Add environment variables so Docker/Render env vars are picked up
 builder.Configuration.AddEnvironmentVariables();
@@ -105,6 +140,10 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.UseSerilogRequestLogging();
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -126,4 +165,16 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+try
+{
+    Log.Information("Application started successfully");
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application failed to start");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
